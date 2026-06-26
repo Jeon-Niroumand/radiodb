@@ -1,0 +1,80 @@
+.appHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 12px 16px;
+  background-color: #1f2937;
+  color: white;
+  border-bottom: 1px solid #374151;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.headerIconBtn {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 1.4rem;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 8px;
+  transition: background-color 0.2s ease;
+}
+
+.headerIconBtn:hover {
+  background-color: rgba(255, 255, 255, 0.12);
+}
+
+.headerSearchWrap {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+}
+
+.headerSearchInput {
+  width: 100%;
+  max-width: 500px;
+  padding: 10px 14px;
+  border: 1px solid #4b5563;
+  border-radius: 10px;
+  outline: none;
+  font-size: 1rem;
+  background-color: white;
+  color: #111827;
+}
+
+.headerSearchInput:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.25);
+}
+
+.headerMenuWrap {
+  position: relative;
+}
+
+.headerDropdown {
+  position: absolute;
+  right: 0;
+  top: 48px;
+  min-width: 160px;
+  background-color: white;
+  border: 1px solid #d1d5db;
+  border-radius: 10px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  overflow: hidden;
+  z-index: 1001;
+}
+
+.headerDropdownItem {
+  display: block;
+  padding: 12px 14px;
+  color: #111827;
+  text-decoration: none;
+  font-size: 0.95rem;
+}
+
+.headerDropdownItem:hover {
+  background-color: #f3f4f6;
+}

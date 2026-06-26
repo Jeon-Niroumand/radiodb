@@ -12,23 +12,36 @@ export default function SitesPage() {
     getSites().then(setSites).catch(console.error);
   }, []);
 
-  const handleDelete = async (site) => {
-    const confirmed = window.confirm(
-      `Are you sure you want to delete site # ${site.name}?`
+const handleDelete = async (site) => {
+  const confirmed = window.confirm(
+    `Are you sure you want to delete site "${site.name}"?`
+  );
+
+  if (!confirmed) return;
+
+  console.log('Deleting site object:', site);
+  console.log('site.index =', site.index);
+  console.log('API URL being called =', `${API_URL}/${site.index}`);
+
+  try {
+    const response = await axios.delete(`${API_URL}/${site.index}`);
+    console.log('DELETE success:', response.data);
+
+    setSites((prev) => prev.filter((s) => s.index !== site.index));
+  } catch (err) {
+    console.log('FULL DELETE ERROR:', err);
+    console.log('err.response?.status:', err.response?.status);
+    console.log('err.response?.data:', err.response?.data);
+    console.log('err.message:', err.message);
+
+    alert(
+      err.response?.data?.error ||
+      err.response?.data ||
+      err.message ||
+      'Failed to delete site'
     );
-
-    if (!confirmed) return;
-
-    try {
-      await axios.delete(`${API_URL}/${site.index}`);
-
-      // Remove from UI without refresh
-      setSites(prev => prev.filter(s => s.index !== site.index));
-    } catch (err) {
-      console.error(err);
-      alert('Failed to delete site');
-    }
-  };
+  }
+};
 
   return (
     <div className="p-6">
@@ -59,7 +72,8 @@ export default function SitesPage() {
               <td>{site.plcode}</td>
               <td>
                 <div className="actions">
-                  <Link to={`/edit/${site.index}`}>
+                  <Link to={`/sites/edit/${site.index}`}
+                  style={{ textDecoration: 'none', color: 'black', marginRight: '10px' }}>
                     ✎
                   </Link>
 

@@ -1,6 +1,11 @@
 import React, { useState } from 'react';
 
-export default function SiteForm({ onSubmit, initialData = {} }) {
+export default function SiteForm({ 
+  onSubmit, 
+  initialData = {},
+  resetSerialTrigger = 0
+  
+}) {
   const [index, setIndex] = useState(initialData.index || '');
   const [name, setName] = useState(initialData.name || '');
   const [type, setType] = useState(initialData.type || '');
