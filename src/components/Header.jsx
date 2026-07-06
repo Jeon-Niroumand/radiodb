@@ -27,7 +27,7 @@ export default function Header({ searchTerm = '', onSearchChange }) {
         <input
           type="text"
           className="header-search-input"
-          placeholder="Search radios, staff, sites..."
+          placeholder="Search model, serial, site name..."
           value={searchTerm}
           onChange={(e) => onSearchChange?.(e.target.value)}
         />

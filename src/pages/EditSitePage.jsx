@@ -5,6 +5,9 @@ import { getSiteByIndex, updateSite } from '../api/sites';
 
 export default function EditSitePage() {
   const { index } = useParams();
+  
+  console.log('Route index:', index);
+
   const navigate = useNavigate();
 
   const [site, setSite] = useState(null);

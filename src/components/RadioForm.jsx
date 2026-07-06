@@ -84,6 +84,8 @@ export default function RadioForm({
       pl: sitePlCode
     };
 
+    console.log("Submitting radio:", radio);
+    
     await onSubmit(radio);
   };
 
