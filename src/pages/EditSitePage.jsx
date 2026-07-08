@@ -2,10 +2,12 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import SiteForm from '../components/SiteForm';
 import { getSiteByIndex, updateSite } from '../api/sites';
+import { useNotification } from '../context/NotificationContext';
 
 export default function EditSitePage() {
   const { index } = useParams();
-  
+  const { showSuccess, showError } = useNotification();
+
   console.log('Route index:', index);
 
   const navigate = useNavigate();
@@ -18,9 +20,9 @@ export default function EditSitePage() {
       try {
         const data = await getSiteByIndex(index);
         setSite(data);
-      } catch (error) {
-        console.error('Failed to load site', error);
-        alert('Error loading site');
+      } catch (err) {
+        console.error(err);
+        showError('Error loading site');
       } finally {
         setLoading(false);
       }
@@ -38,10 +40,11 @@ export default function EditSitePage() {
 
     try {
       await updateSite(index, updatedSite);
+      showSuccess(`Site "${updatedSite.name}" updated successfully`);
       navigate('/sites');
-    } catch (error) {
-      console.error('Failed to update site', error);
-      alert(error.response?.data?.error || 'Error updating site');
+    } catch (err) {
+      console.error(err);
+      showError('Error updating site');
     }
   };
 

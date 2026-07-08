@@ -2,15 +2,30 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { getSites } from '../api/sites';
 import axios from 'axios';
+import { useNotification } from '../context/NotificationContext';
 
 const API_URL = 'http://localhost:5000/sites';
 
 export default function SitesPage() {
   const [sites, setSites] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const { showSuccess, showError } = useNotification();
 
   useEffect(() => {
-    getSites().then(setSites).catch(console.error);
-  }, []);
+  setLoading(true);
+
+  getSites()
+    .then((data) => {
+      setSites(data);
+    })
+    .catch((err) => {
+      console.error("Error loading sites:", err);
+      showError("Failed to load sites.");
+    })
+    .finally(() => {
+      setLoading(false);
+    });
+}, []);
 
 const handleDelete = async (site) => {
   const confirmed = window.confirm(
@@ -26,6 +41,7 @@ const handleDelete = async (site) => {
   try {
     const response = await axios.delete(`${API_URL}/${site.index}`);
     console.log('DELETE success:', response.data);
+    showSuccess(`Deleted site "${site.name}" successfully.`);
 
     setSites((prev) => prev.filter((s) => s.index !== site.index));
   } catch (err) {
@@ -33,13 +49,7 @@ const handleDelete = async (site) => {
     console.log('err.response?.status:', err.response?.status);
     console.log('err.response?.data:', err.response?.data);
     console.log('err.message:', err.message);
-
-    alert(
-      err.response?.data?.error ||
-      err.response?.data ||
-      err.message ||
-      'Failed to delete site'
-    );
+    showError('Error deleting site');
   }
 };
 
@@ -61,33 +71,43 @@ const handleDelete = async (site) => {
           </tr>
         </thead>
         <tbody>
-          {sites.map(site => (
-            <tr key={site.index} className="border-t">
-              <td>{site.index}</td>
-              <td>{site.name}</td>
-              <td>{site.type}</td>
-              <td>{site.frequency}</td>
-              <td>{site.repeater_rx}</td>
-              <td>{site.repeater_tx}</td>
-              <td>{site.plcode}</td>
-              <td>
-                <div className="actions">
-                  <Link to={`/sites/edit/${site.index}`}
-                  style={{ textDecoration: 'none', color: 'black', marginRight: '10px' }}>
-                    ✎
-                  </Link>
-
-                  <span
-                    onClick={() => handleDelete(site)}
-                    className="delete-icon"
-                    title="Delete Radio"
-                  >
-                    🗑
-                  </span>
-                </div>
-              </td>
+          {loading ? (
+            <tr>
+              <td colSpan="8" className="text-center py-4">Loading...</td>
             </tr>
-          ))}
+          ) : sites.length === 0 ? (
+            <tr>
+              <td colSpan="8" className="text-center py-4">No sites found.</td>
+            </tr>
+          ) : (
+            sites.map(site => (
+              <tr key={site.index} className="border-t">
+                <td>{site.index}</td>
+                <td>{site.name}</td>
+                <td>{site.type}</td>
+                <td>{site.frequency}</td>
+                <td>{site.repeater_rx}</td>
+                <td>{site.repeater_tx}</td>
+                <td>{site.plcode}</td>
+                <td>
+                  <div className="actions">
+                    <Link to={`/sites/edit/${site.index}`}
+                    style={{ textDecoration: 'none', color: 'black', marginRight: '10px' }}>
+                      ✎
+                    </Link>
+
+                    <span
+                      onClick={() => handleDelete(site)}
+                      className="delete-icon"
+                      title="Delete Radio"
+                    >
+                      🗑
+                    </span>
+                  </div>
+                </td>
+              </tr>
+            ))
+          )}
         </tbody>
       </table>
     </div>

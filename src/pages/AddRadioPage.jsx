@@ -2,9 +2,11 @@ import React, { useState } from 'react';
 import RadioForm from '../components/RadioForm';
 import { createRadio } from '../api/radios';
 
+import { useNotification } from '../context/NotificationContext';
+
 export default function AddRadioPage() {
   const [resetSerialTrigger, setResetSerialTrigger] = useState(0);
-  const [successMessage, setSuccessMessage] = useState('');
+  const { showSuccess, showError } = useNotification();
 
   const handleAdd = async (radio) => {
     try {
@@ -14,12 +16,11 @@ export default function AddRadioPage() {
       setResetSerialTrigger(prev => prev + 1);
 
       // Optional success flash
-      setSuccessMessage(`Saved serial ${radio.serial}`);
-      setTimeout(() => setSuccessMessage(''), 1500);
+      showSuccess(`Added serial # ${radio.serial}`);
 
-    } catch (error) {
-      console.error('Failed to create radio', error);
-      alert('Error adding radio');
+    } catch (err) {
+      console.error(err);
+      showError('Failed to add radio');
     }
   };
 
@@ -28,12 +29,6 @@ export default function AddRadioPage() {
       <h2 style={{ fontSize: '20px', fontWeight: 'bold', marginBottom: '16px' }}>
         Add Radio
       </h2>
-
-      {successMessage && (
-        <div style={{ marginBottom: '12px', color: 'green' }}>
-          {successMessage}
-        </div>
-      )}
 
       <RadioForm 
         onSubmit={handleAdd}

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import Header from '../components/Header';
+import { useNotification } from '../context/NotificationContext';
 
 const API_URL = `${process.env.REACT_APP_API_URL}/radios`;
 
@@ -12,6 +13,8 @@ export default function RadiosPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState('');  
   const [loading, setLoading] = useState(true);
+
+  const { showSuccess, showError } = useNotification();
 
   const LIMIT = 50;
 
@@ -54,9 +57,10 @@ useEffect(() => {
     try {
       await axios.delete(`${API_URL}/${radio.id}`);
       setRadios(prev => prev.filter(r => r.id !== radio.id));
+      showSuccess(`Deleted serial # ${radio.serial}`);
     } catch (err) {
       console.error(err);
-      alert('Failed to delete radio');
+      showError('Failed to delete radio');
     }
   };
 

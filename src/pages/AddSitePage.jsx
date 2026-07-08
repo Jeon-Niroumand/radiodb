@@ -2,17 +2,20 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import SiteForm from '../components/SiteForm';
 import { createSite } from '../api/sites';
+import { useNotification } from '../context/NotificationContext';
 
 export default function AddSitePage() {
   const navigate = useNavigate();
+  const { showSuccess, showError } = useNotification();
 
   const handleAdd = async (site) => {
     try {
       await createSite(site);
+      showSuccess(`Site "${site.name}" added successfully.`);
       navigate('/sites');
     } catch (err) {
       console.error(err);
-      alert('Failed to add site');
+      showError('Error adding site');
     }
   };
 

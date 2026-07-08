@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import RadioForm from '../components/RadioForm';
 import { getRadioById, updateRadio } from '../api/radios';
+import { useNotification } from '../context/NotificationContext';
 
 export default function EditRadioPage() {
   const { id } = useParams();
@@ -9,15 +10,16 @@ export default function EditRadioPage() {
 
   const [radio, setRadio] = useState(null);
   const [loading, setLoading] = useState(true);
+  const { showSuccess, showError } = useNotification();
 
   useEffect(() => {
     async function loadRadio() {
       try {
         const data = await getRadioById(id);
         setRadio(data);
-      } catch (error) {
-        console.error('Failed to load radio', error);
-        alert('Error loading radio');
+      } catch (err) {
+        console.error(err);
+        showError('Error loading radio');
       } finally {
         setLoading(false);
       }
@@ -29,10 +31,13 @@ export default function EditRadioPage() {
   const handleUpdate = async (updatedRadio) => {
     try {
       await updateRadio(id, updatedRadio);
+
+      showSuccess(`Updated serial # ${updatedRadio.serial}`);
+
       navigate('/');
-    } catch (error) {
-      console.error('Failed to update radio', error);
-      alert('Error updating radio');
+    } catch (err) {
+      console.error(err);
+      showError('Error updating radio');
     }
   };
 
