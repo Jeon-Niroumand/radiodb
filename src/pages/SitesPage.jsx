@@ -57,10 +57,10 @@ const handleDelete = async (site) => {
   return (
     <div className="p-6">
       <h1 className="text-xl font-bold mb-4">Sites</h1>
-      <Link to="/add-site" className="bg-blue-600 text-white px-3 py-1 rounded">Add Site</Link>
-      <table className="w-full mt-4 border">
+      <Link to="/add-site">Add Site</Link>
+      <table className="sites-table">
         <thead>
-          <tr>
+          <tr className="sites-table-header">
             <th>Index</th>
             <th>Name</th>
             <th>Type</th>
@@ -84,7 +84,7 @@ const handleDelete = async (site) => {
             </tr>
           ) : (
             sites.map(site => (
-              <tr key={site.index} className="border-t">
+              <tr key={site.index} className="sites-table-row">
                 <td>{site.index}</td>
                 <td>{site.name}</td>
                 <td>{site.type}</td>

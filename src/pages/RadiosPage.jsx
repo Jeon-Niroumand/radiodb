@@ -80,9 +80,9 @@ useEffect(() => {
       <main style={{ padding: '16px' }}>
         <h1>Radios</h1>
         <Link to="/add">Add Radio</Link>
-        <table>
+        <table className="radios-table">
           <thead>
-            <tr>
+            <tr className="radios-table-header">
               <th>Model</th>
               <th>Serial</th>
               <th>Site Name</th>
@@ -107,7 +107,7 @@ useEffect(() => {
               </tr>
             ) : (
               radios.map((r) => (
-                <tr key={r.id}>
+                <tr key={r.id} className="radios-table-row">
                   <td>{r.model}</td>
                   <td>{r.serial}</td>
                   <td>{r.site_name}</td>
@@ -116,11 +116,8 @@ useEffect(() => {
                   <td>{r.site_repeater_rx}</td>
                   <td>{r.site_repeater_tx}</td>
                   <td>{r.site_plcode}</td>
-                  <td>
-                    <Link
-                      to={`/edit/${r.id}`}
-                      style={{ textDecoration: 'none', color: 'black' }}
-                    >
+                  <td className="actions">
+                    <Link to={`/edit/${r.id}`}>
                       ✎
                     </Link>
 
