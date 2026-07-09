@@ -3,20 +3,26 @@ import { Link } from 'react-router-dom';
 import axios from 'axios';
 import Header from '../components/Header';
 import { useNotification } from '../context/NotificationContext';
-
+import LoadingSpinner from '../components/LoadingSpinner';
 const API_URL = `${process.env.REACT_APP_API_URL}/radios`;
 
 export default function RadiosPage() {
   const [radios, setRadios] = useState([]);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [totalRecords, setTotalRecords] = useState(0);
   const [searchTerm, setSearchTerm] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState('');  
   const [loading, setLoading] = useState(true);
 
   const { showSuccess, showError } = useNotification();
 
-  const LIMIT = 50;
+  const [limit, setLimit] = useState(50); // Number of radios per page
+  const startRecord =
+         totalRecords === 0 ? 0 : (page - 1) * limit + 1;
+
+  const endRecord =
+    Math.min(page * limit, totalRecords);
 
 useEffect(() => {
   const handler = setTimeout(() => {
@@ -33,10 +39,11 @@ useEffect(() => {
   setLoading(true);
 
   axios
-    .get(`${API_URL}?page=${page}&limit=${LIMIT}&search=${encodeURIComponent(debouncedSearch)}`)
+    .get(`${API_URL}?page=${page}&limit=${limit}&search=${encodeURIComponent(debouncedSearch)}`)
     .then(res => {
       setRadios(res.data.data || []);
       setTotalPages(res.data.totalPages || 1);
+      setTotalRecords(res.data.totalRecords || 0);
     })
     .catch(err => {
       console.error('Error loading radios:', err);
@@ -45,7 +52,7 @@ useEffect(() => {
     .finally(() => {
       setLoading(false);
     });
-}, [page, debouncedSearch]);
+}, [page, limit, debouncedSearch]);
 
   const handleDelete = async (radio) => {
     const confirmed = window.confirm(
@@ -90,7 +97,9 @@ useEffect(() => {
           <tbody>
             {loading ? (
               <tr>
-                <td colSpan="9">Loading...</td>
+                <td colSpan={9}>
+                  <LoadingSpinner text="Loading radios..." />
+                </td>
               </tr>
             ) : radios.length === 0 ? (
               <tr>
@@ -127,24 +136,63 @@ useEffect(() => {
             )}
           </tbody>
         </table>
-        <div style={{ marginTop: '16px', display: 'flex', gap: '8px' }}>
+        <div className = "pagination-container">
           <button
+            className="pagination-button"
             disabled={page === 1}
-            onClick={() => setPage(p => p - 1)}
+            onClick={() => setPage(1)}
           >
-            Prev
+            {"<<"}
           </button>
-
-          <span>
-            Page {page} of {totalPages}
-          </span>
 
           <button
-            disabled={page === totalPages}
-            onClick={() => setPage(p => p + 1)}
+            className="pagination-button"
+            disabled={page === 1}
+            onClick={() => setPage((p) => p - 1)}
           >
-            Next
+            {"<"}
           </button>
+
+          <div className="pagination-info">
+              <div>
+                  Page {page} of {totalPages}
+              </div>
+
+              <small>
+                  Showing {startRecord}-{endRecord} of {totalRecords} radios
+              </small>
+          </div>
+
+          <button
+            className="pagination-button"
+            disabled={page === totalPages}
+            onClick={() => setPage((p) => p + 1)}
+          >
+            {">"}
+          </button>
+
+          <button
+            className="pagination-button"
+            disabled={page === totalPages}
+            onClick={() => setPage(totalPages)}
+          >
+            {">>"}
+          </button>
+
+          <label className="rows-selector">
+              Rows:
+              <select
+                  value={limit}
+                  onChange={(e) => {
+                      setLimit(Number(e.target.value));
+                      setPage(1);
+                  }}
+              >
+                  <option value={25}>25</option>
+                  <option value={50}>50</option>
+                  <option value={100}>100</option>
+              </select>
+          </label>
         </div>
       </main>
     </div>

@@ -64,11 +64,11 @@ router.get('/', async (req, res) => {
         `%${search}%`
       ]
     );
-
+    
     res.json({
       data: result.rows,
-      total: parseInt(countResult.rows[0].count),
       totalPages: Math.ceil(countResult.rows[0].count / limit),
+      totalRecords: Number(countResult.rows[0].count),
       page
     });
   } catch (err) {

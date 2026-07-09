@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { getSites } from '../api/sites';
 import axios from 'axios';
 import { useNotification } from '../context/NotificationContext';
+import LoadingSpinner from '../components/LoadingSpinner';
 
 const API_URL = 'http://localhost:5000/sites';
 
@@ -73,7 +74,9 @@ const handleDelete = async (site) => {
         <tbody>
           {loading ? (
             <tr>
-              <td colSpan="8" className="text-center py-4">Loading...</td>
+              <td colSpan={8} className="text-center py-4">
+                <LoadingSpinner text="Loading sites..." />
+              </td>
             </tr>
           ) : sites.length === 0 ? (
             <tr>

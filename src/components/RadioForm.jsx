@@ -16,6 +16,21 @@ export default function RadioForm({
   const [siteRepeaterTx, setSiteRepeaterTx] = useState('');
   const [siteRepeaterRx, setSiteRepeaterRx] = useState('');
   const [sitePlCode, setSitePlCode] = useState('');
+  const [isSaving, setIsSaving] = useState(false);
+  const [errors, setErrors] = useState({});
+
+  const validateForm = () => {
+    const newErrors = {};
+    if (!model.trim())
+      newErrors.model = "Model is required.";
+    if (!serial.trim())
+      newErrors.serial = "Serial is required.";
+    if (!siteIndex)
+      newErrors.siteIndex = "Site selection is required.";
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   const serialInputRef = useRef(null);
 
@@ -74,29 +89,36 @@ export default function RadioForm({
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const radio = {
-      model,
-      serial,
-      site_index: siteIndex === '' ? null : Number(siteIndex),
-      frequency: siteFrequency,
-      repeater_tx_frequency: siteRepeaterTx,
-      repeater_rx_frequency: siteRepeaterRx,
-      pl: sitePlCode
-    };
+    if (!validateForm()) return;
 
-    console.log("Submitting radio:", radio);
-    
-    await onSubmit(radio);
+    setIsSaving(true);
+    try {
+      await onSubmit({
+        model: model.trim(),
+        serial: serial.trim(),
+        site_index: siteIndex === '' ? null : Number(siteIndex),
+        frequency: siteFrequency,
+        repeater_tx_frequency: siteRepeaterTx,
+        repeater_rx_frequency: siteRepeaterRx,
+        pl: sitePlCode
+      });
+    } finally {
+      setIsSaving(false);
+    }
   };
 
-  const MODELS = ['BPR50', 'CP200', 'CP200D']; // List of models for dropdown - can be expanded later
+  const MODELS = ['BPR50', 'CP200', 'CP200D', 'R2']; // List of models for dropdown - can be expanded later
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div>
         <label>Model:</label>
         <select
           value={model}
-          onChange={e => setModel(e.target.value)}
+          disabled={isSaving}
+          onChange={e => {
+             setModel(e.target.value);
+             setErrors(prev => ({ ...prev, model: '' })); // Clear model error on change
+          }}
           className="border p-1 w-full"
         >
           <option value="">Select model...</option>
@@ -104,6 +126,7 @@ export default function RadioForm({
             <option key={m} value={m}>{m}</option>
           ))}
         </select>
+        {errors.model && <p className="text-red-500">{errors.model}</p>}
       </div>
 
       <div>
@@ -111,16 +134,25 @@ export default function RadioForm({
         <input
           type="text"
           value={serial}
-          onChange={e => setSerial(e.target.value)}
+          disabled={isSaving}
+          onChange={e => {
+            setSerial(e.target.value);
+            setErrors(prev => ({ ...prev, serial: '' })); // Clear serial error on change
+          }}
           ref={serialInputRef}
         />
+        {errors.serial && <p className="text-red-500">{errors.serial}</p>}
       </div>
 
       <div>
         <label>Site:</label>
         <select
           value={siteIndex}
-          onChange={e => setSiteIndex(e.target.value)}
+          disabled={isSaving}
+          onChange={e => {
+            setSiteIndex(e.target.value);
+            setErrors(prev => ({ ...prev, siteIndex: '' })); // Clear site_index error on change
+          }}
         >
           <option value="">Select site...</option>
           {sites.map(site => (
@@ -129,6 +161,7 @@ export default function RadioForm({
             </option>
           ))}
         </select>
+        {errors.siteIndex && <p className="text-red-500">{errors.siteIndex}</p>}
       </div>
 
       {siteIndex !== '' && (
@@ -137,15 +170,26 @@ export default function RadioForm({
             <label>Site Name:</label>
             <input
               value={siteName}
-              onChange={e => setSiteName(e.target.value)}
+              readOnly
+              disabled
+              onChange={e => {
+                setSiteName(e.target.value);
+                setErrors(prev => ({ ...prev, site_name: '' })); // Clear site_name error on change
+              }}
             />
+            {errors.site_name && <p className="text-red-500">{errors.site_name}</p>}
           </div>
 
           <div>
             <label>Site Type:</label>
             <input
               value={siteType}
-              onChange={e => setSiteType(e.target.value)}
+              readOnly
+              disabled
+              onChange={e => {
+                setSiteType(e.target.value);
+                setErrors(prev => ({ ...prev, site_type: '' })); // Clear site_type error on change
+              }}
             />
           </div>
 
@@ -153,6 +197,8 @@ export default function RadioForm({
             <label>Frequency:</label>
             <input
               value={siteFrequency}
+              readOnly
+              disabled
               onChange={e => setSiteFrequency(e.target.value)}
               type="text"
             />
@@ -162,6 +208,8 @@ export default function RadioForm({
             <label>Repeater RX Frequency:</label>
             <input
               value={siteRepeaterRx}
+              readOnly
+              disabled
               onChange={e => setSiteRepeaterRx(e.target.value)}
               type="text"
             />
@@ -171,6 +219,8 @@ export default function RadioForm({
             <label>Repeater TX Frequency:</label>
             <input
               value={siteRepeaterTx}
+              readOnly
+              disabled
               onChange={e => setSiteRepeaterTx(e.target.value)}
               type="text"
             />
@@ -180,6 +230,8 @@ export default function RadioForm({
             <label>PL Code:</label>
             <input
               value={sitePlCode}
+              readOnly
+              disabled
               onChange={e => setSitePlCode(e.target.value)}
               type="text"
             />
@@ -187,7 +239,12 @@ export default function RadioForm({
         </>
       )}
 
-      <button type="submit">Save</button>
+      <button 
+          type="submit"
+          disabled={isSaving}
+      >
+          {isSaving ? 'Saving...' : 'Save'}
+      </button>
     </form>
   );
 }
