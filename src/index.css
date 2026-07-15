@@ -22,7 +22,7 @@ code {
     width: 100%;
     border-collapse: collapse;
     margin-top: 16px;
-    font-size: 14px;
+    font-size: 16px;
 }
 
 .radios-table thead th {
@@ -53,20 +53,20 @@ code {
     background-color: #f0f7ff;
 }
 
-.sites-table {
+.data-table {
     width: 100%;
     border-collapse: collapse;
     margin-top: 16px;
     font-size: 14px;
 }
 
-.sites-table thead th {
+.data-table thead th {
     position: sticky;
     top: 0;
     z-index: 1;
 }
 
-.sites-table th {
+.data-table th {
     background-color: #f2f2f2;
     color: #333;
     text-align: left;
@@ -75,16 +75,16 @@ code {
     font-weight: 600;
 }
 
-.sites-table td {
+.data-table td {
     padding: 1px;
     border-bottom: 1px solid #ddd;
 }
 
-.sites-table-row:nth-child(even) {
+.data-table-row:nth-child(even) {
     background-color: #fafafa;
 }
 
-.sites-table-row:hover {
+.data-table-row:hover {
     background-color: #f0f7ff;
 }
 

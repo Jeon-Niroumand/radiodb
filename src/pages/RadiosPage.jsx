@@ -6,12 +6,11 @@ import { useNotification } from '../context/NotificationContext';
 import LoadingSpinner from '../components/LoadingSpinner';
 const API_URL = `${process.env.REACT_APP_API_URL}/radios`;
 
-export default function RadiosPage() {
+export default function RadiosPage({ searchTerm }) {
   const [radios, setRadios] = useState([]);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [totalRecords, setTotalRecords] = useState(0);
-  const [searchTerm, setSearchTerm] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState('');  
   const [loading, setLoading] = useState(true);
 
@@ -71,18 +70,14 @@ useEffect(() => {
     }
   };
 
-  
-
   return (
     <div>
-      <Header searchTerm={searchTerm} onSearchChange={setSearchTerm} />
-
       <main style={{ padding: '16px' }}>
         <h1>Radios</h1>
         <Link to="/add">Add Radio</Link>
         <table className="radios-table">
           <thead>
-            <tr className="radios-table-header">
+            <tr className="data-table-header">
               <th>Model</th>
               <th>Serial</th>
               <th>Site Name</th>
@@ -107,7 +102,7 @@ useEffect(() => {
               </tr>
             ) : (
               radios.map((r) => (
-                <tr key={r.id} className="radios-table-row">
+                <tr key={r.id} className="data-table-row">
                   <td>{r.model}</td>
                   <td>{r.serial}</td>
                   <td>{r.site_name}</td>

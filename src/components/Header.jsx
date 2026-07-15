@@ -1,10 +1,19 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import './Header.css';
 
 export default function Header({ searchTerm = '', onSearchChange }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const handleSearch = (value) => {
+    if (location.pathname !== '/') {
+      navigate('/');
+    }
+
+    onSearchChange?.(value);
+  };
 
   const handleHomeClick = () => {
     navigate('/');
@@ -29,7 +38,7 @@ export default function Header({ searchTerm = '', onSearchChange }) {
           className="header-search-input"
           placeholder="Search model, serial, site name..."
           value={searchTerm}
-          onChange={(e) => onSearchChange?.(e.target.value)}
+          onChange={(e) => handleSearch?.(e.target.value)}
         />
       </div>
 
@@ -60,6 +69,14 @@ export default function Header({ searchTerm = '', onSearchChange }) {
               onClick={() => setMenuOpen(false)}
             >
               Sites
+            </Link>
+
+            <Link
+              to="/users"
+              className="header-dropdown-item"
+              onClick={() => setMenuOpen(false)}
+            >
+              Users
             </Link>
           </div>
         )}
