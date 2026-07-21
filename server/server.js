@@ -16,8 +16,23 @@ app.set("trust proxy", 1); // Required when running behind Render's proxy
 
 const allowedOrigins = [
   "http://localhost:3000",
-  process.env.CLIENT_URL,
+  "https://radiodb.onrender.com",
 ];
+
+console.log("Allowed origins:", allowedOrigins);
+
+app.use(cors({
+  origin(origin, callback) {
+    console.log("CORS request origin:", origin);
+
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  credentials: true,
+}));
 
 app.get("/", (req, res) => {
   res.json({
