@@ -28,6 +28,7 @@ app.get("/", (req, res) => {
 app.use(
   cors({
     origin(origin, callback) {
+      console.log("CORS request origin", origin);
       // Allow requests with no Origin (e.g. curl, Postman)
       if (!origin || allowedOrigins.includes(origin)) {
         callback(null, true);
