@@ -10,14 +10,34 @@ import usersRouter from './routes/users.js';
 import rolesRouter from './routes/roles.js';
 
 console.log('DATABASE_URL loaded:', !!process.env.DATABASE_URL);
-// console.log(process.env.DATABASE_URL);
 
 const app = express();
+app.set("trust proxy", 1); // Required when running behind Render's proxy
 
-app.use(cors({
-  origin: process.env.CLIENT_URL,
-  credentials: true,
-}));
+const allowedOrigins = [
+  "http://localhost:3000",
+  process.env.CLIENT_URL,
+];
+
+app.get("/", (req, res) => {
+  res.json({
+    status: "RadioDB API running",
+  });
+});
+
+app.use(
+  cors({
+    origin(origin, callback) {
+      // Allow requests with no Origin (e.g. curl, Postman)
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    credentials: true,
+  })
+);
 
 app.use(express.json());
 
@@ -29,8 +49,8 @@ app.use(
 
     cookie: {
       httpOnly: true,
-      sameSite: "lax",
-      secure: false, // Change to "true" when moved to https, leave for development
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+      secure: process.env.NODE_ENV === "production",
     },
   })
 );
