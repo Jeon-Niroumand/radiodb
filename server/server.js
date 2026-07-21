@@ -40,21 +40,6 @@ app.get("/", (req, res) => {
   });
 });
 
-app.use(
-  cors({
-    origin(origin, callback) {
-      console.log("CORS request origin", origin);
-      // Allow requests with no Origin (e.g. curl, Postman)
-      if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(new Error("Not allowed by CORS"));
-      }
-    },
-    credentials: true,
-  })
-);
-
 app.use(express.json());
 
 app.use(
@@ -73,7 +58,9 @@ app.use(
 
 app.use(passport.initialize());
 app.use(passport.session());
-
+app.get("/auth-test", (req, res) => {
+  res.json({ message: "Auth area reachable" });
+});
 app.use("/auth", authRoutes);
 
 app.use('/radios', radiosRouter);
