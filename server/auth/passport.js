@@ -12,6 +12,12 @@ import {
 
 const VIEWER_ROLE_ID = 3; // Change if your Viewer role has a different ID.
 
+console.log("Google OAuth config:", {
+  clientID: process.env.GOOGLE_CLIENT_ID,
+  callbackURL: process.env.GOOGLE_CALLBACK_URL,
+  hasSecret: !!process.env.GOOGLE_CLIENT_SECRET,
+});
+
 passport.use(
   new GoogleStrategy(
     {
