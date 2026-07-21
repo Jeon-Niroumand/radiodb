@@ -13,6 +13,10 @@ export function googleCallback(req, res, next) {
 }
 
 export function loginSuccess(req, res) {
+  console.log("LOGIN SUCCESS");
+  console.log("USER:", req.user);
+  console.log("SESSION:", req.session);
+
   res.redirect(process.env.CLIENT_URL);
 }
 

@@ -25,7 +25,9 @@ export function AuthProvider({ children }) {
   function login() {
     const url = `${process.env.REACT_APP_API_URL}/auth/google`;
 
+    console.log("Login URL:", url);
     alert(url);
+
     window.location.href = url;
   }
 
