@@ -10,7 +10,12 @@ import {
 
 const router = express.Router();
 
-router.get("/google", googleLogin);
+console.log("AUTH ROUTES LOADED");
+
+router.get("/google", (req, res, next) => {
+  console.log("GOOGLE LOGIN ROUTE HIT");
+  googleLogin(req, res, next);
+});
 
 router.get(
   "/google/callback",
