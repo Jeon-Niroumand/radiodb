@@ -23,8 +23,10 @@ export function AuthProvider({ children }) {
   }, []);
 
   function login() {
-    window.location.href =
-      `${process.env.REACT_APP_API_URL}/auth/google`;
+    const url = `${process.env.REACT_APP_API_URL}/auth/google`;
+
+    alert(url);
+    window.location.href = url;
   }
 
   async function logout() {
