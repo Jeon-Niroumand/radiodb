@@ -65,7 +65,7 @@ app.use('/sites', sitesRouter);
 app.use('/users', usersRouter);
 app.use('/roles', rolesRouter);
 
-const PORT = process.env.SERVER_PORT || 5000;
+const PORT = process.env.PORT || process.env.SERVER_PORT || 5000;
 
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
