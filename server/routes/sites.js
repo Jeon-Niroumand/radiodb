@@ -1,10 +1,13 @@
 import express from 'express';
 import pool from '../db/pool.js';
+import authenticate from '../middleware/authenticate.js';
+import authorize from '../middleware/authorize.js';
 
 const router = express.Router();
 
 // Get all sites
-router.get('/', async (req, res) => {
+router.get('/', authenticate, authorize("Administrator", "Technician", "Viewer"),
+  async (req, res) => {
   try {
     const result = await pool.query('SELECT * FROM sites ORDER BY index');
     res.json(result.rows);
@@ -15,7 +18,8 @@ router.get('/', async (req, res) => {
 });
 
 // Add a new site
-router.post('/', async (req, res) => {
+router.post('/', authenticate, authorize("Administrator"),
+  async (req, res) => {
   const { index, name, type, frequency, repeater_rx, repeater_tx, plcode } = req.body;
   try {
     // Check if index already exists
@@ -42,7 +46,8 @@ router.post('/', async (req, res) => {
 });
 
 // Get a site by index
-router.get('/:index', async (req, res) => {
+router.get('/:index', authenticate, authorize("Administrator", "Technician", "Viewer"),
+  async (req, res) => {
   const { index } = req.params;
 
   console.log('Looking up site index:', index);
@@ -59,7 +64,8 @@ router.get('/:index', async (req, res) => {
 });
 
 // Update a site
-router.put('/:index', async (req, res) => {
+router.put('/:index', authenticate, authorize("Administrator", "Technician"),
+  async (req, res) => {
   
   const index = Number(req.params.index);
 
@@ -106,7 +112,8 @@ router.put('/:index', async (req, res) => {
 });
 
 // Delete a site
-router.delete('/:index', async (req, res) => {
+router.delete('/:index', authenticate, authorize("Administrator"),
+  async (req, res) => {
   const { index } = req.params;
 
   try {

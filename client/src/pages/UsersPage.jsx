@@ -1,11 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { getUsers } from '../api/users';
-import axios from 'axios';
 import { useNotification } from '../context/NotificationContext';
 import LoadingSpinner from '../components/LoadingSpinner';
-
-const API_URL = 'http://localhost:5000/users';
 
 export default function UsersPage() {
   const [users, setUsers] = useState([]);

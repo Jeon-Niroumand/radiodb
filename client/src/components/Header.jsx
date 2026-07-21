@@ -1,9 +1,13 @@
 import React, { useState } from 'react';
+import { useAuth } from '../context/AuthContext';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import './Header.css';
 
 export default function Header({ searchTerm = '', onSearchChange }) {
+  const { user, login, logout } = useAuth();
+
   const [menuOpen, setMenuOpen] = useState(false);
+
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -19,9 +23,15 @@ export default function Header({ searchTerm = '', onSearchChange }) {
     navigate('/');
   };
 
+  const handleLogout = async () => {
+    await logout();
+    setMenuOpen(false);
+    navigate('/');
+  };
+
   return (
     <header className="app-header">
-      {/* Left: Home */}
+      {/* Home */}
       <button
         className="header-icon-btn"
         onClick={handleHomeClick}
@@ -31,23 +41,47 @@ export default function Header({ searchTerm = '', onSearchChange }) {
         🏠
       </button>
 
-      {/* Center: Search */}
+      {/* Search */}
       <div className="header-search-wrap">
         <input
           type="text"
           className="header-search-input"
           placeholder="Search model, serial, site name..."
           value={searchTerm}
-          onChange={(e) => handleSearch?.(e.target.value)}
+          onChange={(e) => handleSearch(e.target.value)}
         />
       </div>
 
-      {/* Right: Gear + dropdown */}
+      {/* User */}
+      <div className="header-user">
+        {user ? (
+          <>
+            <span className="header-user-name">
+              {user.display_name}
+            </span>
+
+            <button
+              className="header-auth-btn"
+              onClick={handleLogout}
+            >
+              Logout
+            </button>
+          </>
+        ) : (
+          <button
+            className="header-auth-btn"
+            onClick={login}
+          >
+            Login
+          </button>
+        )}
+      </div>
+
+      {/* Menu */}
       <div className="header-menu-wrap">
         <button
           className="header-icon-btn"
-          onClick={() => setMenuOpen((prev) => !prev)}
-          aria-label="Open settings menu"
+          onClick={() => setMenuOpen(!menuOpen)}
           title="Menu"
         >
           ☰

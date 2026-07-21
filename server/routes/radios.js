@@ -1,6 +1,7 @@
 import express from 'express';
 import pool from '../db/pool.js';
-const CURRENT_USER_ID = 1; // Placeholder for the current user ID
+import authenticate from '../middleware/authenticate.js';
+import authorize from '../middleware/authorize.js';
 
 function escapeCSV(value) {
   if (value === null || value === undefined) return "";
@@ -13,7 +14,9 @@ const router = express.Router();
 /**
  * Get all radios (pagination support)
  */
-router.get('/', async (req, res) => {
+router.get(
+  '/', authenticate, authorize("Administrator", "Technician", "Viewer"),
+  async (req, res) => {
   const page = parseInt(req.query.page) || 1;
   const limit = parseInt(req.query.limit) || 50;
   const offset = (page - 1) * limit;
@@ -103,12 +106,13 @@ router.get('/', async (req, res) => {
 /**
  * Add a new radio
  */
-router.post('/', async (req, res) => {
+router.post(
+  '/', authenticate, authorize("Administrator", "Technician"),
+   async (req, res) => {
   const {
     model,
     serial,
     site_index,
-    tech_sign_id
   } = req.body;
   try {
     const result = await pool.query(
@@ -133,8 +137,8 @@ router.post('/', async (req, res) => {
           model,
           serial,
           site_index,
-          tech_sign_id || null,
-          CURRENT_USER_ID // Use the current user ID
+          req.user.id,
+          req.user.id,
       ]
     );
     res.status(201).json(result.rows[0]);
@@ -147,13 +151,14 @@ router.post('/', async (req, res) => {
 /**
  * Update a radio
  */
-router.put('/:id', async (req, res) => {
+router.put(
+  '/:id', authenticate, authorize("Administrator", "Technician"), 
+  async (req, res) => {
   const { id } = req.params;
   const {
       model,
       serial,
       site_index,
-      tech_sign_id
   } = req.body;
 
   try {
@@ -175,8 +180,8 @@ router.put('/:id', async (req, res) => {
           model,
           serial,
           site_index,
-          tech_sign_id || null,
-          CURRENT_USER_ID,
+          req.user.id, // Use the current user ID
+          req.user.id,
           id
       ]
     )
@@ -197,7 +202,9 @@ router.put('/:id', async (req, res) => {
 /**
  * Get one radio by ID
  */
-router.get('/:id', async (req, res) => {
+router.get(
+  '/:id', authenticate, authorize("Administrator", "Technician", "Viewer"),
+  async (req, res) => {
   const { id } = req.params;
 
   try {
@@ -243,7 +250,9 @@ router.get('/:id', async (req, res) => {
 /**
  * Export all radios as CSV
  */
-router.get('/export', async (req, res) => {
+router.get(
+  '/export', authenticate, authorize("Administrator", "Technician"), 
+  async (req, res) => {
   try {
     const result = await pool.query(`
       SELECT
@@ -253,7 +262,7 @@ router.get('/export', async (req, res) => {
         s.frequency AS site_frequency,
         s.repeater_rx AS site_repeater_rx,
         s.repeater_tx AS site_repeater_tx,
-        s.plcode AS site_plcode
+        s.plcode AS site_plcode,
         u.display_name AS tech_sign
       FROM radios r
       LEFT JOIN sites s
@@ -277,7 +286,17 @@ router.get('/export', async (req, res) => {
 /**
  * Delete a radio
  */
-router.delete('/:id', async (req, res) => {
+router.delete(
+  '/:id', authenticate, authorize("Administrator", "Technician"),
+  (req, res, next) => {
+    console.log("DELETE REQUEST HIT:", req.params.id);
+    next();
+  },
+  authenticate,
+  authorize("Administrator", "Technician"),
+  async (req, res) => {
+  console.log("DELETE USER:", req.user);
+  console.log("DELETE RADIO ID:", req.params.id);
   const { id } = req.params;
 
   try {

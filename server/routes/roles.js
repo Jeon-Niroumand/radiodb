@@ -1,12 +1,16 @@
 import express from 'express';
 import pool from '../db/pool.js';
+import authenticate from '../middleware/authenticate.js';
+import authorize from '../middleware/authorize.js';
 
 const router = express.Router();
 
 /**
  * Get all roles
  */
-router.get('/', async (req, res) => {
+router.get(
+  '/', authenticate, authorize("Administrator"), 
+  async (req, res) => {
   try {
     const result = await pool.query(`
       SELECT
