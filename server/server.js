@@ -1,19 +1,26 @@
 import 'dotenv/config';
-import session from 'express-session';
-import passport from './auth/passport.js';
+
 import express from 'express';
 import cors from 'cors';
+import session from 'express-session';
+import pgSession from 'connect-pg-simple';
+
+import passport from './auth/passport.js';
+import pool from './db/pool.js';
+
 import authRoutes from './auth/authRoutes.js';
 import radiosRouter from './routes/radios.js';
 import sitesRouter from './routes/sites.js';
 import usersRouter from './routes/users.js';
 import rolesRouter from './routes/roles.js';
 
-
 console.log('DATABASE_URL loaded:', !!process.env.DATABASE_URL);
 
 const app = express();
-app.set("trust proxy", 1); // Required when running behind Render's proxy
+
+app.set("trust proxy", 1);
+
+const PgSession = pgSession(session);
 
 const allowedOrigins = [
   "http://localhost:3000",
@@ -35,24 +42,20 @@ app.use(cors({
   credentials: true,
 }));
 
-import pgSession from "connect-pg-simple";
-import pool from "./db/pool.js";
-
-const PgSession = pgSession(session);
-
-app.get("/", (req, res) => {
-  res.json({
-    status: "RadioDB API running",
-  });
-});
-
 app.use(express.json());
+
+
+/*
+|--------------------------------------------------------------------------
+| Session middleware
+|--------------------------------------------------------------------------
+*/
 
 app.use(
   session({
     store: new PgSession({
       pool,
-      tableName: "user_sessions",
+      tableName: "session",
     }),
 
     secret: process.env.SESSION_SECRET,
@@ -60,29 +63,61 @@ app.use(
     resave: false,
     saveUninitialized: false,
 
+    // Required behind Render proxy
     proxy: true,
 
     cookie: {
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
       httpOnly: true,
-      sameSite: "none",
       secure: true,
-      domain: ".onrender.com",
-      maxAge: 1000 * 60 * 60 * 24 * 7,
+      sameSite: "none",
     },
   })
 );
 
+
+/*
+|--------------------------------------------------------------------------
+| Passport
+|--------------------------------------------------------------------------
+*/
+
 app.use(passport.initialize());
 app.use(passport.session());
-app.get("/auth-test", (req, res) => {
-  res.json({ message: "Auth area reachable" });
+
+
+/*
+|--------------------------------------------------------------------------
+| Routes
+|--------------------------------------------------------------------------
+*/
+
+app.get("/", (req, res) => {
+  res.json({
+    status: "RadioDB API running",
+  });
 });
+
+app.get("/auth-test", (req, res) => {
+  res.json({
+    message: "Auth area reachable",
+    user: req.user || null,
+  });
+});
+
 app.use("/auth", authRoutes);
 
-app.use('/radios', radiosRouter);
-app.use('/sites', sitesRouter);
-app.use('/users', usersRouter);
-app.use('/roles', rolesRouter);
+app.use("/radios", radiosRouter);
+app.use("/sites", sitesRouter);
+app.use("/users", usersRouter);
+app.use("/roles", rolesRouter);
+
+
+/*
+|--------------------------------------------------------------------------
+| Start server
+|--------------------------------------------------------------------------
+*/
 
 const PORT = process.env.PORT || process.env.SERVER_PORT || 5000;
 
