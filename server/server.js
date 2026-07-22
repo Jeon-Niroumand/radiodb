@@ -124,15 +124,12 @@ app.use("/roles", rolesRouter);
 |--------------------------------------------------------------------------
 */
 
-app.get("/cookie-test", (req,res)=> {
-  res.cookie("testcookie","hello", {
-    secure:true,
-    sameSite:"none"
-  });
-
-  res.json({
-    cookies:req.headers.cookie
-  });
+app.use((req, res, next) => {
+  console.log("SESSION DEBUG");
+  console.log("ID:", req.sessionID);
+  console.log("USER:", req.user);
+  console.log("COOKIE HEADER:", req.headers.cookie);
+  next();
 });
 
 /*
