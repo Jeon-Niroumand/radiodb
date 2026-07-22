@@ -74,10 +74,12 @@ passport.use(
 );
 
 passport.serializeUser((user, done) => {
+  console.log("SERIALIZE USER:", user.id);
   done(null, user.id);
 });
 
 passport.deserializeUser(async (id, done) => {
+  console.log("DESERIALIZE USER:", id);
   try {
     const user = await getUserById(id);
     done(null, user);

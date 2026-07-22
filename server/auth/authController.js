@@ -65,6 +65,7 @@ export function logout(req, res) {
 export function currentUser(req, res) {
   console.log("AUTH CHECK USER:", req.user);
   console.log("SESSION ID:", req.sessionID);
+  console.log("SESSION:", req.session);
 
   if (!req.user) {
     return res.status(401).json({
