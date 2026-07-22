@@ -16,30 +16,62 @@ router.get("/google", (req, res, next) => {
 });
 
 router.get(
-  "/google/callback",
-  passport.authenticate("google", {
-    failureRedirect: `${process.env.CLIENT_URL}/login?error=auth`,
-  }),
-  (req, res, next) => {
+"/google/callback",
 
-    console.log("AUTH SUCCESS USER:", req.user);
+passport.authenticate("google", {
+ failureRedirect:
+ `${process.env.CLIENT_URL}/login?error=auth`
+}),
 
-    router.get(
-      "/google/callback",
-      passport.authenticate("google", {
-        failureRedirect: `${process.env.CLIENT_URL}/login?error=auth`,
-      }),
-      (req, res) => {
+(req,res)=>{
 
-        console.log("AUTH SUCCESS USER:", req.user);
-        console.log("SESSION:", req.session);
 
-        res.redirect(process.env.CLIENT_URL);
-      }
-    );
+console.log("LOGIN SUCCESS");
 
-  }
+console.log("SESSION BEFORE SAVE");
+console.log(req.session);
+
+
+req.session.save(err=>{
+
+
+if(err){
+
+console.error(
+"SESSION SAVE FAILED",
+err
 );
+
+return res.sendStatus(500);
+
+}
+
+
+
+console.log(
+"SESSION AFTER SAVE"
+);
+
+console.log(req.session);
+
+
+
+console.log(
+"COOKIE HEADER",
+res.getHeaders()["set-cookie"]
+);
+
+
+
+res.redirect(
+process.env.CLIENT_URL
+);
+
+
+});
+
+
+});
 
 router.get("/me", (req, res) => {
   console.log("AUTH /me CHECK");
