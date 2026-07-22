@@ -47,6 +47,7 @@ app.use(
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
+    proxy: true, // For production in Render
 
     cookie: {
       httpOnly: true,
