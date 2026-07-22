@@ -66,8 +66,8 @@ app.use(
     secret: process.env.SESSION_SECRET,
 
     resave: false,
-    saveUninitialized: true,
-    rolling: true,
+    saveUninitialized: false,
+    rolling: false,
 
     // Required behind Render proxy
     proxy: true,

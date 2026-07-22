@@ -9,19 +9,20 @@ export function googleLogin(req, res, next) {
 export function loginSuccess(req, res) {
   console.log("LOGIN SUCCESS HANDLER");
 
-  req.session.save(err => {
+  console.log("USER:", req.user);
+  console.log("SESSION BEFORE SAVE:", req.session);
+
+  req.session.save((err) => {
     if (err) {
-      console.error(err);
-      return next(err);
+      console.error("SESSION SAVE ERROR:", err);
+      return res.sendStatus(500);
     }
 
-    res.cookie("debugcookie", "hello", {
-      secure: true,
-      sameSite: "none",
-      httpOnly: false
-    });
-
-    console.log("HEADERS NOW:", res.getHeaders());
+    console.log("SESSION SAVED");
+    console.log(
+      "SET COOKIE:",
+      res.getHeader("Set-Cookie")
+    );
 
     res.redirect(process.env.CLIENT_URL);
   });
