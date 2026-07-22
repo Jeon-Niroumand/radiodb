@@ -25,6 +25,7 @@ router.get(
 
 router.get("/me", (req, res) => {
   console.log("AUTH /me CHECK");
+   console.log("REQ HEADERS COOKIE:", req.headers.cookie);
   console.log("SESSION ID:", req.sessionID);
   console.log("SESSION:", req.session);
   console.log("USER:", req.user);

@@ -53,8 +53,18 @@ export function googleCallback(req, res, next) {
 }
 
 export function loginSuccess(req, res) {
-  console.log("Redirecting to:", process.env.CLIENT_URL);
-  res.redirect(process.env.CLIENT_URL);
+  console.log("LOGIN SUCCESS HANDLER");
+
+  req.session.save((err) => {
+    if (err) {
+      console.error("SESSION SAVE ERROR:", err);
+      return res.status(500).send("Session save failed");
+    }
+
+    console.log("SESSION FINAL:", req.session);
+
+    res.redirect(process.env.CLIENT_URL);
+  });
 }
 
 export function logout(req, res) {
