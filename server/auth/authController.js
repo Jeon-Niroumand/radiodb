@@ -6,58 +6,6 @@ export function googleLogin(req, res, next) {
   })(req, res, next);
 }
 
-export function googleCallback(req, res, next) {
-  console.log("GOOGLE CALLBACK HIT");
-
-  passport.authenticate(
-    "google",
-    {
-      failureRedirect: `${process.env.CLIENT_URL}/login?error=auth`,
-    },
-    (err, user) => {
-
-      console.log("PASSPORT CALLBACK RESULT");
-      console.log("ERROR:", err);
-      console.log("USER:", user);
-
-      if (err) {
-        return next(err);
-      }
-
-      if (!user) {
-        return res.redirect(
-          `${process.env.CLIENT_URL}/login?error=auth`
-        );
-      }
-
-      req.logIn(user, (err) => {
-        if (err) {
-          return next(err);
-        }
-
-        console.log("LOGIN SUCCESS USER:", req.user);
-
-        req.session.touch();
-
-        req.session.save((err) => {
-          if (err) {
-            console.error("SESSION SAVE ERROR:", err);
-            return next(err);
-          }
-
-          console.log("SESSION SAVED");
-
-          console.log("HEADERS:");
-          console.log(res.getHeaders());
-
-          res.redirect(process.env.CLIENT_URL);
-        });
-      });
-
-    }
-  )(req, res, next);
-}
-
 export function loginSuccess(req, res) {
   console.log("LOGIN SUCCESS HANDLER");
 
