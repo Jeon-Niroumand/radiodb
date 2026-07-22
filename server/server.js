@@ -53,6 +53,8 @@ app.use(express.json());
 
 app.use(
   session({
+    name: "radiodb.sid",
+    
     store: new PgSession({
       pool,
       tableName: "session",

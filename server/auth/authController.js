@@ -37,6 +37,8 @@ export function googleCallback(req, res, next) {
 
         console.log("LOGIN SUCCESS USER:", req.user);
 
+        req.session.touch();
+
         req.session.save((err) => {
           if (err) {
             console.error("SESSION SAVE ERROR:", err);
@@ -44,6 +46,9 @@ export function googleCallback(req, res, next) {
           }
 
           console.log("SESSION SAVED");
+
+          console.log("HEADERS:");
+          console.log(res.getHeaders());
 
           res.redirect(process.env.CLIENT_URL);
         });
