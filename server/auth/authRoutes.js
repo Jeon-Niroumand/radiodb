@@ -19,8 +19,7 @@ router.get("/google", (req, res, next) => {
 
 router.get(
   "/google/callback",
-  googleCallback,
-  loginSuccess
+  googleCallback
 );
 
 router.get("/me", (req, res) => {

@@ -24,7 +24,7 @@ const PgSession = pgSession(session);
 
 const allowedOrigins = [
   "http://localhost:3000",
-  "https://radiodb.onrender.com",
+  process.env.CLIENT_URL,
 ];
 
 console.log("Allowed origins:", allowedOrigins);
