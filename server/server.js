@@ -33,15 +33,10 @@ console.log(
   !!process.env.SESSION_SECRET
 );
 app.use(cors({
-  origin(origin, callback) {
-    console.log("CORS request origin:", origin);
-
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error("Not allowed by CORS"));
-    }
-  },
+  origin: [
+    "http://localhost:3000",
+    "https://radiodb.onrender.com"
+  ],
   credentials: true,
 }));
 
@@ -56,27 +51,16 @@ app.use(express.json());
 
 app.use(
   session({
-    name: "radiodb.sid",
-
-    store: new PgSession({
-      pool,
-      tableName: "session",
-    }),
-
     secret: process.env.SESSION_SECRET,
-
     resave: false,
     saveUninitialized: false,
-    rolling: false,
-
-    // Required behind Render proxy
     proxy: true,
-
     cookie: {
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-      httpOnly: true,
       secure: true,
-      sameSite: "none"
+      httpOnly: true,
+      sameSite: "none",
+      domain: ".onrender.com",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
     },
   })
 );
