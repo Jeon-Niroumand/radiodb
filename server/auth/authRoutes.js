@@ -30,7 +30,7 @@ router.get(
 
       console.log("FINAL SESSION:", req.session);
       console.log("FINAL COOKIE:", req.session.cookie);
-
+      console.log("SET COOKIE HEADER:", res.getHeader("Set-Cookie"));
       res.redirect(process.env.CLIENT_URL);
     });
 
