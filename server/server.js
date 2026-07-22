@@ -33,10 +33,15 @@ console.log(
   !!process.env.SESSION_SECRET
 );
 app.use(cors({
-  origin: [
-    "http://localhost:3000",
-    "https://radiodb.onrender.com"
-  ],
+  origin(origin, callback) {
+    console.log("CORS request origin:", origin);
+
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
   credentials: true,
 }));
 
@@ -51,16 +56,27 @@ app.use(express.json());
 
 app.use(
   session({
+    name: "radiodb.sid",
+
+    store: new PgSession({
+      pool,
+      tableName: "session",
+    }),
+
     secret: process.env.SESSION_SECRET,
+
     resave: false,
     saveUninitialized: false,
+    rolling: false,
+
+    // Required behind Render proxy
     proxy: true,
+
     cookie: {
-      secure: true,
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
       httpOnly: true,
-      sameSite: "none",
-      domain: ".onrender.com",
-      maxAge: 7 * 24 * 60 * 60 * 1000,
+      secure: true,
+      sameSite: "none"
     },
   })
 );
@@ -94,9 +110,7 @@ app.get("/auth-test", (req, res) => {
     user: req.user || null,
   });
 });
-console.log("PROTOCOL:", req.protocol);
-console.log("SECURE:", req.secure);
-console.log("X-FORWARDED-PROTO:", req.headers["x-forwarded-proto"]);
+
 app.use("/auth", authRoutes);
 
 app.use("/radios", radiosRouter);
