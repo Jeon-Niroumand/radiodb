@@ -10,8 +10,12 @@ export function AuthProvider({ children }) {
   async function refreshUser() {
     try {
       const { data } = await api.get("/auth/me");
+
+      console.log("AUTH RESPONSE:", data);
+
       setUser(data.user);
-    } catch {
+    } catch (err) {
+      console.log("AUTH ERROR:", err.response?.data);
       setUser(null);
     } finally {
       setLoading(false);
