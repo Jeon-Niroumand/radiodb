@@ -35,8 +35,16 @@ export function googleCallback(req, res, next) {
       }
 
       console.log("LOGIN SUCCESS USER:", req.user);
+      console.log("SESSION BEFORE SAVE:", req.session);
 
-      req.session.save(() => {
+      req.session.save((err) => {
+        if (err) {
+          console.log("SESSION SAVE ERROR:", err);
+          return next(err);
+        }
+
+        console.log("SESSION SAVED:", req.session);
+
         res.redirect(process.env.CLIENT_URL);
       });
     });
