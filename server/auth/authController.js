@@ -36,7 +36,8 @@ export function googleCallback(req, res, next) {
         }
 
         console.log("LOGIN SUCCESS USER:", req.user);
-
+        console.log("RESPONSE HEADERS BEFORE REDIRECT:");
+        console.log(res.getHeaders());
         // Let express-session handle saving automatically
         res.redirect(process.env.CLIENT_URL);
       });
