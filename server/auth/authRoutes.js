@@ -2,8 +2,6 @@ import express from "express";
 import passport from "./passport.js"
 import {
   googleLogin,
-  googleCallback,
-  loginSuccess,
   logout,
   currentUser,
 } from "./authController.js";
