@@ -62,7 +62,8 @@ export function loginSuccess(req, res) {
     }
 
     console.log("SESSION FINAL:", req.session);
-
+    console.log("SESSION ID AFTER SAVE:", req.sessionID);
+    console.log("SET COOKIE HEADER:", res.getHeaders()["set-cookie"]);
     res.redirect(process.env.CLIENT_URL);
   });
 }
