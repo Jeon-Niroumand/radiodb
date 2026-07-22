@@ -9,47 +9,40 @@ export function googleLogin(req, res, next) {
 export function googleCallback(req, res, next) {
   console.log("GOOGLE CALLBACK HIT");
 
-  passport.authenticate("google", {
-    failureRedirect: `${process.env.CLIENT_URL}/login?error=auth`,
-  }, (err, user, info) => {
+  passport.authenticate(
+    "google",
+    {
+      failureRedirect: `${process.env.CLIENT_URL}/login?error=auth`,
+    },
+    (err, user) => {
 
-    console.log("PASSPORT CALLBACK RESULT");
-    console.log("ERROR:", err);
-    console.log("USER:", user);
-    console.log("INFO:", info);
+      console.log("PASSPORT CALLBACK RESULT");
+      console.log("ERROR:", err);
+      console.log("USER:", user);
 
-    if (err) {
-      return next(err);
-    }
-
-    if (!user) {
-      return res.redirect(
-        `${process.env.CLIENT_URL}/login?error=auth`
-      );
-    }
-
-    req.logIn(user, (err) => {
       if (err) {
-        console.log("LOGIN ERROR:", err);
         return next(err);
       }
 
-      console.log("LOGIN SUCCESS USER:", req.user);
-      console.log("SESSION BEFORE SAVE:", req.session);
+      if (!user) {
+        return res.redirect(
+          `${process.env.CLIENT_URL}/login?error=auth`
+        );
+      }
 
-      req.session.save((err) => {
+      req.logIn(user, (err) => {
         if (err) {
-          console.log("SESSION SAVE ERROR:", err);
           return next(err);
         }
 
-        console.log("SESSION SAVED:", req.session);
+        console.log("LOGIN SUCCESS USER:", req.user);
 
+        // Let express-session handle saving automatically
         res.redirect(process.env.CLIENT_URL);
       });
-    });
 
-  })(req, res, next);
+    }
+  )(req, res, next);
 }
 
 export function loginSuccess(req, res) {
