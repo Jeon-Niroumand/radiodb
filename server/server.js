@@ -110,7 +110,9 @@ app.get("/auth-test", (req, res) => {
     user: req.user || null,
   });
 });
-
+console.log("PROTOCOL:", req.protocol);
+console.log("SECURE:", req.secure);
+console.log("X-FORWARDED-PROTO:", req.headers["x-forwarded-proto"]);
 app.use("/auth", authRoutes);
 
 app.use("/radios", radiosRouter);
