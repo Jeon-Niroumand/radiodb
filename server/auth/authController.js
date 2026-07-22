@@ -6,28 +6,6 @@ export function googleLogin(req, res, next) {
   })(req, res, next);
 }
 
-export function loginSuccess(req, res) {
-  console.log("LOGIN SUCCESS HANDLER");
-
-  console.log("USER:", req.user);
-  console.log("SESSION BEFORE SAVE:", req.session);
-
-  req.session.save((err) => {
-    if (err) {
-      console.error("SESSION SAVE ERROR:", err);
-      return res.sendStatus(500);
-    }
-
-    console.log("SESSION SAVED");
-    console.log(
-      "SET COOKIE:",
-      res.getHeader("Set-Cookie")
-    );
-
-    res.redirect(process.env.CLIENT_URL);
-  });
-}
-
 export function logout(req, res) {
   req.logout(err => {
     if (err) {
