@@ -24,28 +24,26 @@ router.get(
 
     console.log("AUTH SUCCESS USER:", req.user);
 
-    req.session.save(err => {
-      if (err) {
-        console.error("SESSION SAVE ERROR:", err);
-        return next(err);
+    router.get(
+      "/google/callback",
+      passport.authenticate("google", {
+        failureRedirect: `${process.env.CLIENT_URL}/login?error=auth`,
+      }),
+      (req, res) => {
+
+        console.log("AUTH SUCCESS USER:", req.user);
+        console.log("SESSION:", req.session);
+
+        res.redirect(process.env.CLIENT_URL);
       }
-
-      console.log("SESSION ID BEFORE REDIRECT:", req.sessionID);
-
-      console.log(
-        "SET COOKIE HEADER:",
-        res.getHeader("Set-Cookie")
-      );
-
-      res.redirect(process.env.CLIENT_URL);
-    });
+    );
 
   }
 );
 
 router.get("/me", (req, res) => {
   console.log("AUTH /me CHECK");
-   console.log("REQ HEADERS COOKIE:", req.headers.cookie);
+  console.log("REQ HEADERS COOKIE:", req.headers.cookie);
   console.log("SESSION ID:", req.sessionID);
   console.log("SESSION:", req.session);
   console.log("USER:", req.user);

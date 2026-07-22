@@ -61,22 +61,21 @@ app.use(
     store: new PgSession({
       pool,
       tableName: "session",
+      createTableIfMissing: true,
     }),
 
     secret: process.env.SESSION_SECRET,
 
     resave: false,
     saveUninitialized: false,
-    rolling: false,
 
-    // Required behind Render proxy
     proxy: true,
 
     cookie: {
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+      maxAge: 7 * 24 * 60 * 60 * 1000,
       httpOnly: true,
       secure: true,
-      sameSite: "none"
+      sameSite: "none",
     },
   })
 );
@@ -97,6 +96,15 @@ app.use(passport.session());
 | Routes
 |--------------------------------------------------------------------------
 */
+
+app.use((req, res, next) => {
+  console.log("---- REQUEST DEBUG ----");
+  console.log("URL:", req.originalUrl);
+  console.log("COOKIE:", req.headers.cookie);
+  console.log("SESSION ID:", req.sessionID);
+  console.log("USER:", req.user);
+  next();
+});
 
 app.get("/", (req, res) => {
   res.json({
