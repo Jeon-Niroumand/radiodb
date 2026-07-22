@@ -9,6 +9,7 @@ import sitesRouter from './routes/sites.js';
 import usersRouter from './routes/users.js';
 import rolesRouter from './routes/roles.js';
 
+
 console.log('DATABASE_URL loaded:', !!process.env.DATABASE_URL);
 
 const app = express();
@@ -34,6 +35,11 @@ app.use(cors({
   credentials: true,
 }));
 
+import pgSession from "connect-pg-simple";
+import pool from "./db/pool.js";
+
+const PgSession = pgSession(session);
+
 app.get("/", (req, res) => {
   res.json({
     status: "RadioDB API running",
@@ -44,15 +50,23 @@ app.use(express.json());
 
 app.use(
   session({
+    store: new PgSession({
+      pool,
+      tableName: "user_sessions",
+    }),
+
     secret: process.env.SESSION_SECRET,
+
     resave: false,
     saveUninitialized: false,
-    proxy: true, // For production in Render
+
+    proxy: true,
 
     cookie: {
       httpOnly: true,
       sameSite: "none",
       secure: true,
+      maxAge: 1000 * 60 * 60 * 24 * 7,
     },
   })
 );
