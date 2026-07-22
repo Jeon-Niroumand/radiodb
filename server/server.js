@@ -54,7 +54,7 @@ app.use(express.json());
 app.use(
   session({
     name: "radiodb.sid",
-    
+
     store: new PgSession({
       pool,
       tableName: "session",
@@ -63,7 +63,8 @@ app.use(
     secret: process.env.SESSION_SECRET,
 
     resave: false,
-    saveUninitialized: false,
+    saveUninitialized: true,
+    rolling: true,
 
     // Required behind Render proxy
     proxy: true,
@@ -73,6 +74,7 @@ app.use(
       httpOnly: true,
       secure: true,
       sameSite: "none",
+      domain: ".onrender.com"
     },
   })
 );
@@ -114,6 +116,22 @@ app.use("/sites", sitesRouter);
 app.use("/users", usersRouter);
 app.use("/roles", rolesRouter);
 
+/*
+|--------------------------------------------------------------------------
+| debug route
+|--------------------------------------------------------------------------
+*/
+
+app.get("/cookie-test", (req,res)=> {
+  res.cookie("testcookie","hello", {
+    secure:true,
+    sameSite:"none"
+  });
+
+  res.json({
+    cookies:req.headers.cookie
+  });
+});
 
 /*
 |--------------------------------------------------------------------------

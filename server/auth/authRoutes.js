@@ -20,10 +20,20 @@ router.get(
   passport.authenticate("google", {
     failureRedirect: `${process.env.CLIENT_URL}/login?error=auth`,
   }),
-  (req, res) => {
-    console.log("AUTH SUCCESS USER:", req.user);
+  (req, res, next) => {
 
-    res.redirect(process.env.CLIENT_URL);
+    req.session.save(err => {
+      if (err) {
+        console.error("SESSION SAVE FAILED", err);
+        return next(err);
+      }
+
+      console.log("FINAL SESSION:", req.session);
+      console.log("FINAL COOKIE:", req.session.cookie);
+
+      res.redirect(process.env.CLIENT_URL);
+    });
+
   }
 );
 
