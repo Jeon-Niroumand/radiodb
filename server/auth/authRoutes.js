@@ -23,7 +23,16 @@ router.get(
   loginSuccess
 );
 
-router.get("/me", currentUser);
+router.get("/me", (req, res) => {
+  console.log("AUTH /me CHECK");
+  console.log("SESSION ID:", req.sessionID);
+  console.log("SESSION:", req.session);
+  console.log("USER:", req.user);
+
+  res.json({
+    user: req.user || null,
+  });
+});
 
 router.post("/logout", logout);
 
