@@ -53,21 +53,19 @@ export function googleCallback(req, res, next) {
 }
 
 export function loginSuccess(req, res) {
-  console.log("LOGIN SUCCESS");
+  console.log("LOGIN SUCCESS HANDLER");
 
-  req.session.save(err => {
+  req.session.save((err) => {
     if (err) {
       console.error(err);
       return res.sendStatus(500);
     }
 
-    console.log("SESSION ID:", req.sessionID);
+    console.log("SESSION SAVED");
+    console.log("HEADERS:", res.getHeaders());
+    console.log("SET COOKIE:", res.getHeader("Set-Cookie"));
 
-    res.json({
-      success: true,
-      sessionID: req.sessionID,
-      user: req.user,
-    });
+    res.redirect(process.env.CLIENT_URL);
   });
 }
 
