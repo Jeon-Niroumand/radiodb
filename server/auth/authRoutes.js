@@ -22,15 +22,21 @@ router.get(
   }),
   (req, res, next) => {
 
+    console.log("AUTH SUCCESS USER:", req.user);
+
     req.session.save(err => {
       if (err) {
-        console.error("SESSION SAVE FAILED", err);
+        console.error("SESSION SAVE ERROR:", err);
         return next(err);
       }
 
-      console.log("FINAL SESSION:", req.session);
-      console.log("FINAL COOKIE:", req.session.cookie);
-      console.log("SET COOKIE HEADER:", res.getHeader("Set-Cookie"));
+      console.log("SESSION ID BEFORE REDIRECT:", req.sessionID);
+
+      console.log(
+        "SET COOKIE HEADER:",
+        res.getHeader("Set-Cookie")
+      );
+
       res.redirect(process.env.CLIENT_URL);
     });
 

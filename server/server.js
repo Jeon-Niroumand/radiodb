@@ -28,7 +28,10 @@ const allowedOrigins = [
 ];
 
 console.log("Allowed origins:", allowedOrigins);
-
+console.log(
+  "SESSION SECRET EXISTS:",
+  !!process.env.SESSION_SECRET
+);
 app.use(cors({
   origin(origin, callback) {
     console.log("CORS request origin:", origin);
