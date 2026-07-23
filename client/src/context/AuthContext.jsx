@@ -8,16 +8,23 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true);
 
   async function refreshUser() {
+    console.log("refreshUser() called");
+
     try {
       const { data } = await api.get("/auth/me");
 
       console.log("AUTH RESPONSE:", data);
 
       setUser(data.user);
+
+      console.log("SETTING USER:", data.user);
     } catch (err) {
-      console.log("AUTH ERROR:", err.response?.data);
+      console.log("AUTH ERROR:", err);
+      console.log("STATUS:", err.response?.status);
+      console.log("DATA:", err.response?.data);
       setUser(null);
     } finally {
+      console.log("LOADING FALSE");
       setLoading(false);
     }
   }
