@@ -28,6 +28,11 @@ passport.authenticate("google", {
 
 });
 
+router.get("/google", (req, res, next) => {
+  console.log("GOOGLE LOGIN ROUTE HIT");
+  googleLogin(req, res, next);
+});
+
 router.get("/me", (req, res) => {
   console.log("AUTH /me CHECK");
   console.log("REQ HEADERS COOKIE:", req.headers.cookie);
