@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../api/axios'
-import Header from '../components/Header';
 import { useNotification } from '../context/NotificationContext';
 import LoadingSpinner from '../components/LoadingSpinner';
 const API_URL = `${process.env.REACT_APP_API_URL}/radios`;
@@ -37,8 +36,7 @@ useEffect(() => {
 useEffect(() => {
   setLoading(true);
 
-  api
-    .get(`${API_URL}?page=${page}&limit=${limit}&search=${encodeURIComponent(debouncedSearch)}`)
+  api.get(`/radios?page=${page}&limit=${limit}&search=${encodeURIComponent(debouncedSearch)}`)
     .then(res => {
       setRadios(res.data.data || []);
       setTotalPages(res.data.totalPages || 1);
@@ -61,7 +59,7 @@ useEffect(() => {
     if (!confirmed) return;
 
     try {
-      await api.delete(`${API_URL}/${radio.id}`);
+      await api.delete(`/radios/${radio.id}`);
       setRadios(prev => prev.filter(r => r.id !== radio.id));
       showSuccess(`Deleted serial # ${radio.serial}`);
     } catch (err) {
