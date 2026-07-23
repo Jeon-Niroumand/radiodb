@@ -66,6 +66,16 @@ app.use(
  })
 );
 
+app.use((req,res,next)=>{
+  res.on("finish",()=>{
+    console.log(
+      "FINAL SET COOKIE:",
+      res.getHeader("set-cookie")
+    );
+  });
+
+  next();
+});
 
 app.use(cors({
   origin: function(origin, callback){

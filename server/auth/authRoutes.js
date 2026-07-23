@@ -10,66 +10,21 @@ const router = express.Router();
 
 console.log("AUTH ROUTES LOADED");
 
-router.get("/google", (req, res, next) => {
-  console.log("GOOGLE LOGIN ROUTE HIT");
-  googleLogin(req, res, next);
-});
-
 router.get(
 "/google/callback",
 
 passport.authenticate("google", {
- failureRedirect:
- `${process.env.CLIENT_URL}/login?error=auth`
+  failureRedirect:
+  `${process.env.CLIENT_URL}/login?error=auth`
 }),
 
-(req,res)=>{
+(req, res) => {
 
+  console.log("LOGIN SUCCESS");
+  console.log("USER:", req.user);
+  console.log("SESSION:", req.session);
 
-console.log("LOGIN SUCCESS");
-
-console.log("SESSION BEFORE SAVE");
-console.log(req.session);
-
-
-req.session.save(err=>{
-
-
-if(err){
-
-console.error(
-"SESSION SAVE FAILED",
-err
-);
-
-return res.sendStatus(500);
-
-}
-
-
-
-console.log(
-"SESSION AFTER SAVE"
-);
-
-console.log(req.session);
-
-
-
-console.log(
-"COOKIE HEADER",
-res.getHeaders()["set-cookie"]
-);
-
-
-
-res.redirect(
-process.env.CLIENT_URL
-);
-
-
-});
-
+  res.redirect(process.env.CLIENT_URL);
 
 });
 
